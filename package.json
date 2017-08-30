@@ -1,14 +1,14 @@
 {
-  "name": "empty-s3-bucket",
-  "version": "0.1.0",
+  "name": "empty-bucket",
+  "version": "0.1.1",
   "description": "A utility to completely empty an S3 bucket",
   "main": "index.js",
-  "repository": "git@github.com:RingierAG/empty-s3-bucket.git",
+  "repository": "git@github.com:RingierAG/empty-bucket.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "empty-s3-bucket": "./index.js"
+    "empty-bucket": "./index.js"
   },
   "keywords": [
     "aws",

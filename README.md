@@ -1,4 +1,4 @@
-# empty-s3-bucket
+# empty-bucket
 
 A simple utility to empty an S3 bucket so that the bucket can be deleted by an Ansible task.
 
@@ -11,11 +11,11 @@ used in shell scripts, there intentionally has no confirmation or interaction ne
 
 ## Install
 
-```npm install -g empty-s3-bucket```
+```npm install -g empty-bucket```
 
 ## Run
 
-```empty-s3-bucket [options] <bucket-name>```
+```empty-bucket [options] <bucket-name>```
 
 ```bucket-name``` is just the name, not the ARN, not a name with `s3://` prefix. 
 
