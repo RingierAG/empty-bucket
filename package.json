@@ -1,0 +1,28 @@
+{
+  "name": "empty-s3-bucket",
+  "version": "0.1.0",
+  "description": "A utility to completely empty an S3 bucket",
+  "main": "index.js",
+  "repository": "git@github.com:RingierAG/empty-s3-bucket.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "empty-s3-bucket": "./index.js"
+  },
+  "keywords": [
+    "aws",
+    "devops",
+    "s3"
+  ],
+  "author": "Zhao Wang",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.106.0",
+    "opts": "^1.2.6"
+  },
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-google": "^0.9.1"
+  }
+}
