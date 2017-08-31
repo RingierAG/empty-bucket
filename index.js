@@ -119,7 +119,7 @@ function main() {
       return !marker;
     },
     (err) => {
-      logger.error('[ERROR] failed in deleting the objects.', err);
+      logger.error(`Failed in deleting the objects in bucket ${bucket}.`, err);
       process.exit(1);
     })
     .then(() => {
@@ -144,13 +144,19 @@ function main() {
               if (resultList.DeleteMarkers.length === 0) {
                 return resolve();
               }
-              deleteObjects(resultList.DeleteMarkers, (errDelete, resultDelete) => {
-                if (errDelete) {
-                  return reject(errDelete);
+              deleteObjects(resultList.Versions, (errVersion, resultVersion) => {
+                if (errVersion) {
+                  return reject(errVersion);
                 }
-                logger.debug('[DEBUG] ' + JSON.stringify(resultDelete));
-                return resolve();
-              })
+                logger.debug('[DEBUG] ' + JSON.stringify(resultVersion));
+                deleteObjects(resultList.DeleteMarkers, (errDelete, resultDelete) => {
+                  if (errDelete) {
+                    return reject(errDelete);
+                  }
+                  logger.debug('[DEBUG] ' + JSON.stringify(resultDelete));
+                  return resolve();
+                })
+              });
             })
           })
         },
@@ -158,16 +164,16 @@ function main() {
           return !keyMarker;
         },
         (err) => {
-          logger.error('[ERROR] failed in deleting the versions.', err);
+          logger.error(`Failed in deleting the versions in bucket ${bucket}.`, err);
           process.exit(2);
         })
     })
     .then(() => {
-      logger.log('Done.');
+      logger.log(`Bucket ${bucket} emptied.`);
       process.exit(0);
     })
     .catch((err) => {
-      logger.error('[ERROR] failed in emptying the bucket.', err);
+      logger.error(`Failed in emptying the bucket ${bucket}.`, err);
       process.exit(3);
     })
 }
