@@ -15,6 +15,12 @@ const options = [
     value: true,
   },
   {
+    short: 'b',
+    long: 'bulk-size',
+    description: 'Number of objects to be deleted in one batch (1...1000), default to 500',
+    value: true
+  },
+  {
     short: 'q',
     long: 'quiet',
     description: 'Display nothing but critical error messages',
@@ -45,6 +51,7 @@ AWS.config.apiVersions = {
 };
 const s3 = new AWS.S3();
 const bucket = opts.arg('bucket');
+const bulkSize = opts.get('bulk-size') || 500;
 
 main();
 
@@ -75,7 +82,7 @@ function listObjects(marker, callback) {
   const params = {
     Bucket: bucket,
     ContinuationToken: marker,
-    MaxKeys: 250,
+    MaxKeys: bulkSize,
   };
   s3.listObjectsV2(params, callback);
 }
@@ -85,7 +92,7 @@ function listVersions(keyMarker, versionMarker, callback) {
     Bucket: bucket,
     KeyMarker: keyMarker,
     VersionIdMarker: versionMarker,
-    MaxKeys: 250,
+    MaxKeys: bulkSize,
   };
   return s3.listObjectVersions(params, callback);
 }
@@ -144,19 +151,28 @@ function main() {
               if (resultList.DeleteMarkers.length === 0) {
                 return resolve();
               }
-              deleteObjects(resultList.Versions, (errVersion, resultVersion) => {
-                if (errVersion) {
-                  return reject(errVersion);
-                }
-                logger.debug('[DEBUG] ' + JSON.stringify(resultVersion));
-                deleteObjects(resultList.DeleteMarkers, (errDelete, resultDelete) => {
+              const toDelete = [];
+              if (resultList.Versions && resultList.Versions.length > 0) {
+                resultList.Versions.forEach((v) => {
+                  toDelete.push(v);
+                })
+              }
+              if (resultList.DeleteMarkers && resultList.DeleteMarkers.length > 0) {
+                resultList.DeleteMarkers.forEach((d) => {
+                  toDelete.push(d);
+                })
+              }
+              if (toDelete.length > 0) {
+                deleteObjects(toDelete, (errDelete, resultDelete) => {
                   if (errDelete) {
                     return reject(errDelete);
                   }
                   logger.debug('[DEBUG] ' + JSON.stringify(resultDelete));
                   return resolve();
                 })
-              });
+              } else {
+                return resolve();
+              }
             })
           })
         },
